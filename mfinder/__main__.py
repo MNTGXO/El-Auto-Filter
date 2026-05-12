@@ -3,7 +3,7 @@ import asyncio
 import uvloop
 from pyrogram import Client, idle, __version__
 from pyrogram.raw.all import layer
-from mfinder import APP_ID, API_HASH, BOT_TOKEN
+from mfinder import APP_ID, API_HASH, BOT_TOKEN, DB_URL
 
 uvloop.install()
 
@@ -16,6 +16,8 @@ def _validate_required_config():
         missing.append("API_HASH")
     if not str(BOT_TOKEN).strip():
         missing.append("BOT_TOKEN")
+    if not str(DB_URL).strip():
+        missing.append("DB_URL (or DATABASE_URL)")
 
     if missing:
         missing_vars = ", ".join(missing)

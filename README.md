@@ -33,6 +33,8 @@ Required Variables
 - `OWNER_ID`: User ID of owner.
 - `ADMINS`: User ID of Admins. Separate multiple Admins by space.
 - `DB_URL`: Link to connect postgresql database (setup details given below).
+  - `DATABASE_URL` is also accepted as an alternative env name.
+  - If your provider gives `postgres://...`, it is normalized automatically to `postgresql://...`.
 
 ## Database Setup
 

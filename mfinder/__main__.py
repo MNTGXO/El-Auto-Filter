@@ -25,7 +25,7 @@ def _validate_required_config():
         )
 
 
-async def _start_healthcheck_server():
+async def _start_healthcheck_server(status):
     port = os.environ.get("PORT")
     if not port:
         return None
@@ -33,12 +33,14 @@ async def _start_healthcheck_server():
     async def handle_client(reader, writer):
         try:
             await reader.read(1024)
-            body = b"ok"
+            body_text = status.get("message", "ok")
+            body = body_text.encode("utf-8")
             response = (
                 b"HTTP/1.1 200 OK\r\n"
                 b"Content-Type: text/plain; charset=utf-8\r\n"
-                b"Content-Length: 2\r\n"
-                b"Connection: close\r\n\r\n" + body
+                + f"Content-Length: {len(body)}\r\n".encode("utf-8")
+                + b"Connection: close\r\n\r\n"
+                + body
             )
             writer.write(response)
             await writer.drain()
@@ -50,7 +52,7 @@ async def _start_healthcheck_server():
     return server
 
 
-async def main():
+async def _run_bot(status):
     _validate_required_config()
 
     plugins = dict(root="mfinder/plugins")
@@ -62,19 +64,34 @@ async def main():
         plugins=plugins,
     )
 
-    health_server = await _start_healthcheck_server()
-
     async with app:
         me = await app.get_me()
+        status["message"] = "ok"
         print(
             f"{me.first_name} - @{me.username} - Pyrogram v{__version__} (Layer {layer}) - Started..."
         )
         await idle()
         print(f"{me.first_name} - @{me.username} - Stopped !!!")
 
-    if health_server:
-        health_server.close()
-        await health_server.wait_closed()
+
+async def main():
+    status = {"message": "starting"}
+    health_server = await _start_healthcheck_server(status)
+
+    try:
+        await _run_bot(status)
+    except Exception as exc:
+        status["message"] = f"bot_start_failed: {exc}"
+        print(status["message"])
+
+        if health_server:
+            while True:
+                await asyncio.sleep(3600)
+        raise
+    finally:
+        if health_server:
+            health_server.close()
+            await health_server.wait_closed()
 
 
 uvloop.run(main())

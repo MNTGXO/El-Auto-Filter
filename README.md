@@ -98,7 +98,7 @@ If you want to modify start & help messages, copy [`sample_const.py`](sample_con
 1. Push this repository to GitHub.
 2. In Render, create a **Web Service** from the repo and select **Docker** runtime.
 3. Add all required environment variables from the **Environment Variables** section (especially `APP_ID`, `API_HASH`, and `BOT_TOKEN`).
-4. Deploy. Render provides a `PORT` variable automatically, and the bot now starts a small health endpoint for web checks.
+4. Deploy. Render provides a `PORT` variable automatically, and the bot starts a small health endpoint for web checks. If bot credentials are missing, the endpoint stays up and returns a startup error message so logs are easier to diagnose.
 
 You can also use the included `render.yaml` blueprint.
 
@@ -107,7 +107,7 @@ You can also use the included `render.yaml` blueprint.
 1. Create a new app in Koyeb from this repository (Docker deployment).
 2. Add required environment variables (`BOT_TOKEN`, `APP_ID`, `API_HASH`, `DB_URL`, `OWNER_ID`, `ADMINS`, `DB_CHANNELS`). `APP_ID` must be a numeric value from my.telegram.org.
 3. Ensure `PORT` is set (default in `koyeb.yaml` is `8000`).
-4. Deploy the service.
+4. Deploy the service. If required bot credentials are missing, the web endpoint will still respond and expose a startup error message in logs/body for debugging.
 
 `koyeb.yaml` and `Dockerfile` are included for direct deployment.
 

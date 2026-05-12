@@ -8,6 +8,23 @@ from mfinder import APP_ID, API_HASH, BOT_TOKEN
 uvloop.install()
 
 
+def _validate_required_config():
+    missing = []
+    if not str(APP_ID).strip():
+        missing.append("APP_ID")
+    if not str(API_HASH).strip():
+        missing.append("API_HASH")
+    if not str(BOT_TOKEN).strip():
+        missing.append("BOT_TOKEN")
+
+    if missing:
+        missing_vars = ", ".join(missing)
+        raise RuntimeError(
+            f"Missing required environment variable(s): {missing_vars}. "
+            "Set these values in your deployment environment and restart the service."
+        )
+
+
 async def _start_healthcheck_server():
     port = os.environ.get("PORT")
     if not port:
@@ -34,10 +51,12 @@ async def _start_healthcheck_server():
 
 
 async def main():
+    _validate_required_config()
+
     plugins = dict(root="mfinder/plugins")
     app = Client(
         name="mfinder",
-        api_id=APP_ID,
+        api_id=int(APP_ID),
         api_hash=API_HASH,
         bot_token=BOT_TOKEN,
         plugins=plugins,

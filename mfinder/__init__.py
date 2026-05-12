@@ -14,7 +14,9 @@ id_pattern = re.compile(r"^.\d+$")
 APP_ID = os.environ.get("APP_ID", "")
 API_HASH = os.environ.get("API_HASH", "")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-DB_URL = os.environ.get("DB_URL", "")
+DB_URL = (os.environ.get("DB_URL") or os.environ.get("DATABASE_URL") or "").strip().strip('"\'')
+if DB_URL.startswith("postgres://"):
+    DB_URL = DB_URL.replace("postgres://", "postgresql://", 1)
 OWNER_ID = int(os.environ.get("OWNER_ID", ""))
 ADMINS = [
     int(user) if id_pattern.search(user) else user

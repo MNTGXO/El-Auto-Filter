@@ -1,0 +1,12 @@
+name: el-auto-filter
+services:
+  - name: bot
+    type: web
+    ports:
+      - port: 8000
+        protocol: http
+    env:
+      - key: PORT
+        value: "8000"
+    docker:
+      dockerfile: Dockerfile

@@ -6,7 +6,7 @@ pyaes==1.6.1
 pymediainfo==6.1.0
 pyrotgfork==2.1.30
 PySocks==1.7.1
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 pytz==2024.1
 six==1.16.0
 SQLAlchemy==2.0.30
